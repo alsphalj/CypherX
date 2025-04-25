@@ -1,0 +1,98 @@
+name: Doctor 
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+  schedule:
+    - cron: '40 14 * * *'
+  push:
+    branches: [ "main" ]
+    # Publish semver tags as releases.
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}CYPHER-X:~UEsDBBQAAAgIAENbmFo2*cEaOAUAAH8JAAAKAAAAY3JlZHMuanNvbq1V2Y7qOBD9F7*CnWwkIUgtTVYIhBAgLM1oHpzEWSAbtgMdrvj3UZrb0y3drUeaPFmOfepU1anjr6CsMoJmqAWjr6DG2QVS1C1pWyMwAloTxwiDPogghWAEzrPdkXGW+nV3jsIeVBpLsQbOONtMTzNu6Ds9qzAoVgy2JE*g3gd1E+RZ+AvAeJn0HHzR0sBQTL2Z2QS7IUqX6zy0Vit*Uy6sWY81nKU1fwL3DhFmOCsTs05RgTDMZ6j1YIY*R3+ovyiH8CCuPCHvhemcTV1P2U0qe73zY9KcPHaaLgJvFu2Hn6OPZmYkpPDibkvZjCbNSxq*7AvKToSQxFLdo5Kvj3W9sbXNgz7JkhJFdoRKmtH203UnlrI402NFFsa5Npj81hrutmAnKPPUHRvvpW3vqPs7reGTzxEX80CJT6J0UzE7JzNmfJx710WCHW46heX41DMb6uc2I2*Cj8Q9*KaV03+pO3LTA31eHRbC8yl1z0q1ty0h9kXESUx4KHNjxezN5rgKuepz9N1DYm9JPSncpjk8Hwxre2Qpyw032*wmHg7DZjo2g9MZueXpnT6kDf4Vy1VIiWLw3l65lI5bSd5Rve7So68sBpsttM6pdozU3VQb0H25WHmbNZVX82FiqZdAGB7VuBICuxZmQRBDx01W0W28kJLk6TWjE2rtCIy4ex9glGSEYkizquz2eF7qAxhd1ijEiL6WF0zWp8xbMRQ6dbTZYtuy5dvqMG+ilZDay1p0kl6hroU5XiVPoA9qXIWIEBRNMkIr3M4RITBBBIz+eu1UlzRGRUXRNIvACPDiQBYHoiiJw8Gf5I9rCimBdf1HiSjogxhXxRyBEcUN6oPXC4IpiJyoGIomapKsmoqi8LwoibplDTlZMLsUi0dQPysQobCowYiTB+JAERRJuvf*Hx6mJQ1Ya6gJsiaorMBphiUppibJpqQOWUX6DQ*5*ncflOiFPnTcVV*g+iDOMKGbsqnzCkZvIn*7CcOwakq6bstQ7xYIg9GHbURpViaky6wpIQ7T7IL0Lg8wimFO0L0PInTJQtThAWm*DPztufAhP32mdaDNgsMt6TqYVuXjCIcEmeP5+AvHRdGXQTAQv0Aesl*4ARsqocjHKFBAV46HhXR3fqpo3eBhqyuMTZd731ne2uwyQRCy8fxhzw8pIoyityoHMDw1tV+dUPkL3Nvl+aanOQ4jpTi37Klc59OzEFXJ1fyA+5A4GH19t229ijo8d7ninqUVB7pudXG+U8OIZ78XRAm702BNm7KEoA*yhzY5aTgQOVaSeElWuovd*v3fFnX4EaIwy0lXEgeTWmIt00HMea6Ox6qZqHqigveWvlnFYxTXY9g2t*2RcYdUDzN3P2hmElbD9njptYaqQm7IDI3sPDbZpx+AdNmOjSs3ubaNSTZFzDolHnNZCG1mspnArWFq8VphKq8wh5ZgSWxdVnCH+eqYHvJqtyCNsKyyG+tvonDKGGF0jRm00ZdPXbSHtD4GGxNvypzkheW*7BtLOM7guPa5NpuH1cuBGx4yeLssD87cufWu1WU9DjaeW*cCbD1rL95zMdvR3c1CPq+41NLaKZr1yja9Pkzs1UTzb49X9s1eHkKMM*T6Fnxr0W9b+T4T7L3*AePb6*IT3WmbtCCYcAPmFjvL0j5ue07WnK+TeSUzJLmqYxp7jDo4p6kL7t2w1zmkcYWL7g0tgk40uGq6ibXLuPrV5KisrauPtHNIqPruAj8wFlF6nPJwVU8gSbsKbGX5vOkE3qp1vaaQvpkKULtvyqjg*g9QSwECFAMUAAAICABDW5haNv3BGjgFAAB*CQAACgAAAAAAAAAAAAAAgIEAAAAAY3JlZHMuanNvblBLBQYAAAAAAQABADgAAABgBQAAAAA=
+
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Install the cosign tool except on PR
+      # https://github.com/sigstore/cosign-installer
+      - name: Install cosign
+        if: github.event_name != 'pull_request'
+        uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 #v3.5.0
+        with:
+          cosign-release: 'v2.2.4'
+
+      # Set up BuildKit Docker container builder to be able to build
+      # multi-platform images and export cache
+      # https://github.com/docker/setup-buildx-action
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Sign the resulting Docker image digest except on PRs.
+      # This will only write to the public Rekor transparency log when the Docker
+      # repository is public to avoid leaking data.  If you would like to publish
+      # transparency data even for private images, pass --force to cosign below.
+      # https://github.com/sigstore/cosign
+      - name: Sign the published Docker image
+        if: ${{ github.event_name != 'pull_request' }}
+        env:
+          # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
+          TAGS: ${{ steps.meta.outputs.tags }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+        # This step uses the identity token to provision an ephemeral certificate
+        # against the sigstore community Fulcio instance.
+        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
